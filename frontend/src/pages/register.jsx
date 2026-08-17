@@ -1,0 +1,76 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Container, Form, Button, Card } from 'react-bootstrap';
+import { register } from '../services/auth';
+
+function Register() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await register(username, email, password);
+      navigate('/login');
+    } catch (err) {
+      setError('Erreur lors de l\'inscription');
+    }
+  };
+
+  return (
+    <div style={{ background: '#3d4149', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Container style={{ maxWidth: '400px' }}>
+        <h3 className="text-white text-center mb-4">🚩 RED PRODUCT</h3>
+        <Card className="p-4">
+          <p className="text-muted">Inscrivez-vous en tant que Admin</p>
+          {error && <p className="text-danger">{error}</p>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="Nom"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="password"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check type="checkbox" label="Accepter les termes et la politique" required />
+            </Form.Group>
+            <Button variant="dark" type="submit" className="w-100">
+              S'inscrire
+            </Button>
+          </Form>
+        </Card>
+        <div className="text-center mt-3">
+          <span className="text-white">Vous avez déjà un compte? </span>
+          <Link to="/login" className="text-warning">Se connecter</Link>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+export default Register;
