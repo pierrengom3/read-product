@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Topbar from '../components/Topbar';
+import Topbar from '../components/topbar';
 import { Card, Row, Col } from 'react-bootstrap';
 import { getHotels } from '../services/hotels';
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import Sidebar from '../components/Sidebar';
-import Topbar from '../components/Topbar';
+import Topbar from '../components/topbar';
 import { getHotels } from '../services/hotels';
 
 function HotelList() {
