@@ -7,28 +7,36 @@ import { getHotels } from '../services/hotels';
 
 function HotelList() {
   const [hotels, setHotels] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getHotels().then(setHotels).catch(console.error);
   }, []);
 
+  const filteredHotels = hotels.filter((hotel) => {
+    const term = search.toLowerCase();
+    const nameMatch = hotel.name && hotel.name.toLowerCase().includes(term);
+    const emailMatch = hotel.email && hotel.email.toLowerCase().includes(term);
+    return nameMatch || emailMatch;
+  });
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar active="hotels" />
       <div style={{ flex: 1, background: '#f5f5f5', minHeight: '100vh' }}>
-        <Topbar />
+        <Topbar onSearch={setSearch} />
         <div style={{ padding: '30px' }}>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
               <h4>Liste des hôtels</h4>
-              <p className="text-muted mb-0">Hôtels {hotels.length}</p>
+              <p className="text-muted mb-0">Hôtels {filteredHotels.length}</p>
             </div>
             <Link to="/hotels/create">
               <Button variant="dark">+ Créer un nouvel hôtel</Button>
             </Link>
           </div>
           <Row>
-            {hotels.map((hotel) => (
+            {filteredHotels.map((hotel) => (
               <Col md={3} className="mb-4 d-flex" key={hotel.id}>
                 <Card className="h-100 w-100">
                   {hotel.photo && <Card.Img variant="top" src={hotel.photo} style={{ height: '150px', objectFit: 'cover' }} />}

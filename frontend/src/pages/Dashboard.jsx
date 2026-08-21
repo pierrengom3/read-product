@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import { Card, Row, Col } from 'react-bootstrap';
 import { getHotels } from '../services/hotels';
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState([
     { label: 'Formulaires', value: 125, color: '#8e44ad', icon: 'bi-folder2' },
     { label: 'Messages', value: 40, color: '#16a085', icon: 'bi-chat-dots' },
@@ -13,6 +15,7 @@ function Dashboard() {
     { label: 'Hôtels', value: 0, color: '#8e44ad', icon: 'bi-building' },
     { label: 'Entités', value: 2, color: '#2980b9', icon: 'bi-diagram-3' },
   ]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchHotelsCount = async () => {
@@ -29,19 +32,29 @@ function Dashboard() {
     fetchHotelsCount();
   }, []);
 
+  const filteredStats = stats.filter((stat) =>
+    stat.label.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar active="dashboard" />
       <div style={{ flex: 1, background: '#f5f5f5', minHeight: '100vh' }}>
-        <Topbar />
+        <Topbar onSearch={setSearch} />
         <div style={{ padding: '30px' }}>
           <h4>Dashboard</h4>
           <h3>Bienvenue sur RED Product</h3>
           <p className="text-muted">Gérez vos hôtels et suivez votre activité</p>
           <Row className="mt-4">
-            {stats.map((stat, i) => (
+            {filteredStats.map((stat, i) => (
               <Col md={4} className="mb-3" key={i}>
-                <Card className="p-3 d-flex flex-row align-items-center">
+                <Card
+                  className="p-3 d-flex flex-row align-items-center"
+                  style={{ cursor: stat.label === 'Hôtels' ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (stat.label === 'Hôtels') navigate('/hotels');
+                  }}
+                >
                   <div
                     style={{
                       width: '40px',
