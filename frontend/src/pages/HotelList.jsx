@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
-import { getHotels } from '../services/hotels';
+import { getHotels, deleteHotel } from '../services/hotels';
 
 function HotelList() {
   const [hotels, setHotels] = useState([]);
@@ -12,6 +12,17 @@ function HotelList() {
   useEffect(() => {
     getHotels().then(setHotels).catch(console.error);
   }, []);
+
+  const handleDelete = async (id, name) => {
+    if (!window.confirm(`Supprimer "${name}" ?`)) return;
+    try {
+      await deleteHotel(id);
+      setHotels((prev) => prev.filter((h) => h.id !== id));
+    } catch (err) {
+      console.error('Erreur suppression:', err);
+      alert('Erreur lors de la suppression');
+    }
+  };
 
   const filteredHotels = hotels.filter((hotel) => {
     const term = search.toLowerCase();
@@ -38,7 +49,28 @@ function HotelList() {
           <Row>
             {filteredHotels.map((hotel) => (
               <Col md={3} className="mb-4 d-flex" key={hotel.id}>
-                <Card className="h-100 w-100">
+                <Card className="h-100 w-100" style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => handleDelete(hotel.id, hotel.name)}
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'rgba(255,255,255,0.9)',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '28px',
+                      height: '28px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      zIndex: 2,
+                    }}
+                    title="Supprimer"
+                  >
+                    <i className="bi bi-trash" style={{ color: '#e74c3c', fontSize: '14px' }}></i>
+                  </button>
                   {hotel.photo && <Card.Img variant="top" src={hotel.photo} style={{ height: '150px', objectFit: 'cover' }} />}
                   <Card.Body className="d-flex flex-column">
                     <small className="text-danger" style={{ minHeight: '40px' }}>{hotel.address}</small>
